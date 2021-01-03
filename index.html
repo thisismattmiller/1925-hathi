@@ -1,0 +1,102 @@
+<html>
+<head>
+</head>
+<body>
+	
+
+<style>
+
+  body{
+    font-family: sans-serif;
+    padding-bottom: 5em;
+  }
+
+.chart{
+	width: 100%; margin: auto;
+
+}
+th{
+  text-align: left;
+}
+
+@media (min-width:1025px)  { 
+
+	.chart{
+		width: 75%;
+	}
+}
+
+tr:nth-child(even){
+   background-color:whitesmoke;
+}
+
+</style>
+
+<div class="chart">
+  <h1>Hathi Trust 1925 Public Domain</h1>
+  <p>This icicle chart shows 1925 published works found in Hathi Trust that flipped their rights status to the public domain on January first  2021. They are organized by their Library of Congress Classification. Click to view the nested topics in the hierarchy that flow left to right. When you select a topic it will load a list of those specific titles in a table below the visualization.
+  </p>
+
+  <p>
+  This visualization is not comprehensive as to what fell into the public domain from 1925, it just reflects the resources that were automatically released in the Hathi collection.<br>By <a href="https://thisismattmiller.com">Matt Miller</a></p>
+</div>
+
+
+<div class="chart" style=""></div>
+
+<div class="chart">
+  <h2 id="subjects"></h2>
+  <table>
+      <thead>
+          <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody id="list">
+
+      </tbody>
+  </table>
+
+</div>
+
+<script type="module">
+import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+import define from "https://api.observablehq.com/@thisismattmiller/zoomable-icicle.js?v=3";
+(new Runtime).module(define, name => {
+  if (name === "chart") return Inspector.into(".chart")();
+});
+</script>
+
+
+<script>
+  
+fetch('hash_data.json')
+  .then(response => response.json())
+  .then(data => window.data = data);
+
+  window.loadPageData = function(data){
+    console.log(data,'xxxx')
+    console.log(window.data[data.hash])
+
+    document.getElementById('subjects').innerHTML = window.data[data.hash].subject.join(" -> ")
+    document.getElementById('list').innerHTML = ""
+    window.data[data.hash].volumes.forEach((d)=>{
+
+      let tr = document.createElement('tr')
+
+      tr.innerHTML = `<td>${d.title}</td><td>${d.author}</td><td><a target="_blank" href="https://hdl.handle.net/2027/${d.id}">View</a></td>`
+      document.getElementById('list').appendChild(tr)
+    })
+
+  }
+
+
+
+</script>
+
+</body>
+
+
+</html>
